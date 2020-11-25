@@ -1,16 +1,33 @@
 const express = require("express");
+const morgan = require("morgan");
+
+const booksRouter = require("./routes/bookRouters");
+const userRouter = require("./routes/userRouters");
 
 const app = express();
 
-app.get("/", (req, res) => {
-  res.status(200).json({ status: "success", message: "Hello From Server" });
+app.use(express.json());
+app.use(morgan("dev"));
+app.use(express.static(`${__dirname}/public`));
+
+app.use((req, res, next) => {
+  //console.log("Hit the middle ware");
+  next();
 });
 
-app.post("/", (req, res) => {
-  res.status(201).send(`You can post here...`);
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
 });
 
-const port = 3000;
-app.listen(port, () => {
-  console.log(`App is running on port ${port}`);
+app.use("/api/v1/books", booksRouter);
+app.use("/api/v1/users", userRouter);
+
+app.use((req, res, next) => {
+  res.status(401).json({
+    status: "failed",
+    message: "This URL is not defined",
+  });
 });
+
+module.exports = app;
