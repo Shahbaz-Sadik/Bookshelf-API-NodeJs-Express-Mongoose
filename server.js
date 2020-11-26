@@ -24,35 +24,24 @@ mongoose
     console.log("database error!!!");
   });
 
-const bookSchema = new mongoose.Schema({
-  bookName: {
-    type: String,
-    required: [true, "A Book must have a name"],
-    unique: true,
-  },
-  authorNmae: {
-    type: String,
-    required: [true, "A book must have Author"],
-  },
-  publishYear: {
-    type: String,
-    required: [true, "A book must have publish Year"],
-  },
-  edition: {
-    type: String,
-    default: "1st",
-  },
-  language: {
-    type: String,
-    default: "English",
-  },
-  price: {
-    type: Number,
-    required: [true, "A book must have a price"],
-  },
-});
 
-const Books = mongoose.model("Books", bookSchema);
+// const testBooks = new Books({
+//   bookName: "Js Book",
+//   authorNmae: "G. K. Rouling",
+//   publishYear: "May-2002",
+//   edition: "1st",
+//   language: "English",
+//   price: 2000,
+// });
+
+// testBooks
+//   .save()
+//   .then((doc) => {
+//     console.log(doc);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//   });
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

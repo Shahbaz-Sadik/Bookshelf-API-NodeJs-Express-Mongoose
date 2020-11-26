@@ -1,45 +1,86 @@
 const express = require("express");
+const Books = require("./../models/bookModel");
 
-exports.getAllBooks = (req, res) => {
-  res
-    .status(200)
-    .json({ status: "success", requestAt: req.requestTime, message: "Here You can get all the book list..." });
-};
-
-exports.getBookDetails = (req, res) => {
-  console.log(req.params);
-  res.status(200).json({ status: "success", message: "Here You can get a book details" });
-};
-
-exports.addBook = (req, res) => {
-  console.log(req.body);
-  res.status(200).send({ status: "success", message: "Add a new book" });
-};
-
-exports.updateBook = (req, res) => {
-  console.log(req.params);
-  console.log(req.body);
-  res.status(200).json({
-    status: "success",
-    message: "update book.....a",
-  });
-};
-
-exports.deletBook = (req, res) => {
-  console.log(req.params);
-  res.status(200).json({
-    status: "success",
-    message: "Delete a book",
-  });
-};
-
-exports.checkBody = (req, res, next) => {
-  if (!req.body.name) {
-    return res.status(400).json({
-      status: "failled",
-      message: "Please Give The Book Name",
+exports.getAllBooks = async (req, res) => {
+  try {
+    const getAllBooks = await Books.find({}, { bookName: 1, authorName: 1, _id: 0 });
+    res.status(200).json({
+      status: "success",
+      requestAt: req.requestTime,
+      result: getAllBooks.length,
+      getAllBooks,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      err,
     });
   }
+};
 
-  next();
+exports.getBookDetails = async (req, res) => {
+  try {
+    //console.log(req.params.name);
+    const bookDetails = await Books.findOne({ bookName: req.params.name }, { _id: 0, __v: 0 });
+
+    if (!bookDetails) {
+      throw "No book with this name";
+    }
+
+    res.status(200).json({
+      status: "success",
+      bookDetails,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "Failed",
+      err,
+    });
+  }
+};
+
+exports.addBook = async (req, res) => {
+  try {
+    const newBook = await Books.create(req.body);
+
+    res.status(200).send({ status: "success", newBook });
+  } catch (err) {
+    res.status(400).send({ status: "Fail", message: "Invalid data send", err });
+  }
+};
+
+exports.updateBook = async (req, res) => {
+  try {
+    const editBook = await Books.findOneAndUpdate({ bookName: req.params.name }, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!editBook) throw "No Book with this name to update";
+
+    res.status(200).json({
+      status: "success",
+      editBook,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "faild",
+      err,
+    });
+  }
+};
+
+exports.deletBook = async (req, res) => {
+  try {
+    const deleteOne = await Books.findOneAndDelete({ bookName: req.params.name });
+    if (!deleteOne) throw "No book with this name to delete";
+    res.status(200).json({
+      status: "success",
+      message: `Delete ${req.params.name} from book list`,
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "failed",
+      err,
+    });
+  }
 };
