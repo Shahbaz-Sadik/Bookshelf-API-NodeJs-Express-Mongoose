@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { promisify } = require("util");
 const User = require("./../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
@@ -19,8 +20,8 @@ exports.signUp = async (req, res, next) => {
     res.status(200).json({
       status: "success",
       token,
-      newUser,
-    });
+      message: `Succseefully added ${newUser.name} to user list`,
+    }); 
   } catch (err) {
     res.status(401).json({
       status: "Failed",
@@ -34,7 +35,7 @@ exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-     return res.status(401).json({
+      return res.status(401).json({
         status: "Failed",
         message: "please provide email and password",
       });
@@ -44,7 +45,7 @@ exports.login = async (req, res, next) => {
     //const correct = await bcrypt.compare(password, user.password);
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-     return res.status(400).json({
+      return res.status(400).json({
         status: "Failed",
         message: "please LogIn with correct email and password",
       });
@@ -55,12 +56,41 @@ exports.login = async (req, res, next) => {
     });
 
     res.status(200).json({
-      status: "Log In success",
+      status: "Log In successfull",
       token,
     });
   } catch (err) {
     res.status(401).json({
       status: "Failed",
+      err,
+    });
+  }
+};
+
+exports.protect = async (req, res, next) => {
+  try {
+    let token;
+
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    //console.log(token);
+    if (!token) {
+      return res.status(401).json({
+        status: "Failed",
+        message: "please logIn first",
+      });
+    }
+
+    const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+    const newUser = await User.findById(decoded.id);
+    if (!newUser) throw "This Id no longer exists";
+
+    next();
+  } catch (err) {
+    res.status(401).json({
+      status: "Failed",
+      messages: "Invalid token",
       err,
     });
   }

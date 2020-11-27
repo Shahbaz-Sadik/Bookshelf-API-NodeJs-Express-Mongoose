@@ -12,7 +12,7 @@ exports.getAllBooks = async (req, res) => {
     });
   } catch (err) {
     res.status(400).json({
-      status: "failed",
+      status: "Failed",
       err,
     });
   }
@@ -24,7 +24,7 @@ exports.getBookDetails = async (req, res) => {
     const bookDetails = await Books.findOne({ bookName: req.params.name }, { _id: 0, __v: 0 });
 
     if (!bookDetails) {
-      throw "No book with this name";
+      throw `No book with this name: ${req.params.name}`;
     }
 
     res.status(200).json({
@@ -43,9 +43,9 @@ exports.addBook = async (req, res) => {
   try {
     const newBook = await Books.create(req.body);
 
-    res.status(200).send({ status: "success", newBook });
+    res.status(200).send({ status: "success", message: `${newBook.bookName} successfully added to the book list`});
   } catch (err) {
-    res.status(400).send({ status: "Fail", message: "Invalid data send", err });
+    res.status(400).send({ status: "Fail", message: "Invalid data send or Add an Existing book"});
   }
 };
 
@@ -59,11 +59,11 @@ exports.updateBook = async (req, res) => {
 
     res.status(200).json({
       status: "success",
-      editBook,
+      message: `successfully updated ${editBook.bookName}`,
     });
   } catch (err) {
     res.status(400).json({
-      status: "faild",
+      status: "Failed",
       err,
     });
   }
@@ -79,7 +79,7 @@ exports.deletBook = async (req, res) => {
     });
   } catch (err) {
     res.status(400).json({
-      status: "failed",
+      status: "Failed",
       err,
     });
   }
