@@ -14,14 +14,14 @@ exports.signUp = async (req, res, next) => {
     });
 
     const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRD_IN,
+      expiresIn: process.env.JWT_EXPIRED_IN,
     });
 
-    res.status(200).json({
+    res.status(201).json({
       status: "success",
       token,
-      message: `Succseefully added ${newUser.name} to user list`,
-    }); 
+      message: `Successfully added ${newUser.name} to users list`,
+    });
   } catch (err) {
     res.status(401).json({
       status: "Failed",
@@ -45,18 +45,18 @@ exports.login = async (req, res, next) => {
     //const correct = await bcrypt.compare(password, user.password);
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
-      return res.status(400).json({
+      return res.status(401).json({
         status: "Failed",
         message: "please LogIn with correct email and password",
       });
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: process.env.JWT_EXPIRD_IN,
+      expiresIn: process.env.JWT_EXPIRED_IN,
     });
 
     res.status(200).json({
-      status: "Log In successfull",
+      status: "Log In successfully",
       token,
     });
   } catch (err) {
@@ -67,7 +67,7 @@ exports.login = async (req, res, next) => {
   }
 };
 
-exports.protect = async (req, res, next) => {
+exports.authenticated = async (req, res, next) => {
   try {
     let token;
 

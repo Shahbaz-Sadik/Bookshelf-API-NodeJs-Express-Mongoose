@@ -8,11 +8,11 @@ router.param("name", (req, res, next, value) => {
   next();
 });
 
-router.route("/").get(bookController.getAllBooks).post(authController.protect, bookController.addBook);
+router.route("/").get(bookController.getAllBooks).post(authController.authenticated, bookController.addBook);
 router
   .route("/:name")
   .get(bookController.getBookDetails)
-  .patch(authController.protect, bookController.updateBook)
-  .delete(authController.protect, bookController.deletBook);
+  .patch(authController.authenticated, bookController.updateBook)
+  .delete(authController.authenticated, bookController.deleteBook);
 
 module.exports = router;

@@ -69,7 +69,7 @@ exports.updateBook = async (req, res) => {
   }
 };
 
-exports.deletBook = async (req, res) => {
+exports.deleteBook = async (req, res) => {
   try {
     const deleteOne = await Books.findOneAndDelete({ bookName: req.params.name });
     if (!deleteOne) throw "No book with this name to delete";

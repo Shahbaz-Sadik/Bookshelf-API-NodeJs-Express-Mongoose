@@ -24,8 +24,8 @@ app.use("/api/v1/books", booksRouter);
 app.use("/api/v1/users", userRouter);
 
 app.use((req, res, next) => {
-  res.status(401).json({
-    status: "failed",
+  res.status(404).json({
+    status: "Failed",
     message: "This URL is not defined",
   });
 });
