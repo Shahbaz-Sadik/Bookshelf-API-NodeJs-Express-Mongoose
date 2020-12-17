@@ -36,7 +36,7 @@ exports.login = async (req, res, next) => {
 
     if (!email || !password) {
       return res.status(401).json({
-        status: "Failed",
+        status: false,
         message: "please provide email and password",
       });
     }
@@ -46,7 +46,7 @@ exports.login = async (req, res, next) => {
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       return res.status(401).json({
-        status: "Failed",
+        status: false,
         message: "please LogIn with correct email and password",
       });
     }
@@ -56,13 +56,13 @@ exports.login = async (req, res, next) => {
     });
 
     res.status(200).json({
-      status: "Log In successfully",
+      status: true,
       token,
     });
   } catch (err) {
     res.status(401).json({
-      status: "Failed",
-      err,
+      status: false,
+      message: "Login failed",
     });
   }
 };

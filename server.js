@@ -4,6 +4,7 @@ dotEnv.config({ path: "./config.env" });
 
 const app = require("./app");
 
+
 const DB = process.env.DATABASE_NAME.replace("<PASSWORD>", process.env.PASSWORD);
 
 //console.log(app.get("env"));
@@ -18,32 +19,13 @@ mongoose
     useUnifiedTopology: true,
   })
   .then((con) => {
-    console.log("Database connection sucessfull..");
+    console.log("Database connection successfully..");
   })
   .catch((err) => {
     console.log("database error!!!");
   });
 
-
-// const testBooks = new Books({
-//   bookName: "Js Book",
-//   authorNmae: "G. K. Rouling",
-//   publishYear: "May-2002",
-//   edition: "1st",
-//   language: "English",
-//   price: 2000,
-// });
-
-// testBooks
-//   .save()
-//   .then((doc) => {
-//     console.log(doc);
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
-
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.log(`App is running on port ${port}`);
 });

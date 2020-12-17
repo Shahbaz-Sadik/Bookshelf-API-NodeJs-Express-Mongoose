@@ -3,7 +3,7 @@ const Books = require("./../models/bookModel");
 
 exports.getAllBooks = async (req, res) => {
   try {
-    const getAllBooks = await Books.find({}, { bookName: 1, authorName: 1, _id: 0 });
+    const getAllBooks = await Books.find({}, { bookName: 1, authorName: 1, _id: 1 });
     res.status(200).json({
       status: "success",
       requestAt: req.requestTime,
@@ -43,9 +43,11 @@ exports.addBook = async (req, res) => {
   try {
     const newBook = await Books.create(req.body);
 
-    res.status(200).send({ status: "success", message: `${newBook.bookName} successfully added to the book list`});
+    res
+      .status(200)
+      .send({ status: "success", message: `${newBook.bookName} successfully added to the book list`, newBook });
   } catch (err) {
-    res.status(400).send({ status: "Fail", message: "Invalid data send or Add an Existing book"});
+    res.status(400).send({ status: "Fail", message: "Invalid data send or Add an Existing book" });
   }
 };
 
