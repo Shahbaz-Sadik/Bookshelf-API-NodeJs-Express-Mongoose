@@ -24,7 +24,8 @@ exports.signUp = async (req, res, next) => {
     });
   } catch (err) {
     res.status(401).json({
-      status: "Failed",
+      status: 'Failed',
+      message:"SignUp Failed (may the User Email already exist or Password Must be 8 character length)",
       err,
     });
   }
